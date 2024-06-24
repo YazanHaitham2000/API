@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Add your custom CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="weather-side">
+          <div class="weather-gradient"></div>
+          <div class="date-container">
+            <h2 class="date-dayname" id="day-name">Tuesday</h2>
+            <span class="date-day" id="date">15 Jan 2019</span>
+            <i class="location-icon" data-feather="map-pin"></i>
+            <span class="location" id="location">Paris, FR</span>
+          </div>
+          <div class="weather-container">
+            <i class="weather-icon" data-feather="sun" id="weather-icon"></i>
+            <h1 class="weather-temp" id="temp">29°C</h1>
+            <h3 class="weather-desc" id="description">Sunny</h3>
+          </div>
+        </div>
+        <div class="info-side">
+          <div class="today-info-container">
+            <div class="today-info">
+              <div class="precipitation"> 
+                <span class="title">PRESSURE</span>
+                <span class="pressure-value" id="pressure">0 %</span>
+                <div class="clear"></div>
+              </div>
+              <div class="humidity"> 
+                <span class="title">HUMIDITY</span>
+                <span class="humidity-view" id="humidity">34 %</span>
+                <div class="clear"></div>
+              </div>
+              <div class="wind"> 
+                <span class="title">WIND</span>
+                <span class="wind-view" id="wind">0 km/h</span>
+                <div class="clear"></div>
+              </div>
+            </div>
+          </div>
+          <div class="week-container">
+            <ul class="week-list">
+              <li class="active">
+                <i class="day-icon" data-feather="sun"></i>
+                <span class="day-name">Tue</span>
+                <span class="day-temp">29°C</span>
+              </li>
+              <li>
+                <i class="day-icon" data-feather="cloud"></i>
+                <span class="day-name">Wed</span>
+                <span class="day-temp">21°C</span>
+              </li>
+              <li>
+                <i class="day-icon" data-feather="cloud-snow"></i>
+                <span class="day-name">Thu</span>
+                <span class="day-temp">08°C</span>
+              </li>
+              <li>
+                <i class="day-icon" data-feather="cloud-rain"></i>
+                <span class="day-name">Fri</span>
+                <span class="day-temp">19°C</span>
+              </li>
+              <div class="clear"></div>
+            </ul>
+          </div>
+          <div class="location-container">
+            <select class="location-button listcity" id="city-selector">
+                <option value="Paris">Paris</option>
+                <option value="Amman">Amman</option>
+                <option value="London">London</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const citySelector = document.getElementById('city-selector');
+            const weatherIcon = document.getElementById('weather-icon');
+            const tempElement = document.getElementById('temp');
+            const descriptionElement = document.getElementById('description');
+            const pressureElement = document.getElementById('pressure');
+            const humidityElement = document.getElementById('humidity');
+            const windElement = document.getElementById('wind');
+            const locationElement = document.getElementById('location');
+            const dayNameElement = document.getElementById('day-name');
+            const dateElement = document.getElementById('date');
+            const apiData = {
+                "coord": {
+                    "lon": 35.945,
+                    "lat": 31.9552
+                },
+                "weather": [
+                    {
+                        "id": 800,
+                        "main": "Clear",
+                        "description": "clear sky",
+                        "icon": "01d"
+                    }
+                ],
+                "base": "stations",
+                "main": {
+                    "temp": 306.2,
+                    "feels_like": 305.07,
+                    "temp_min": 305.9,
+                    "temp_max": 306.2,
+                    "pressure": 1011,
+                    "humidity": 29
+                },
+                "visibility": 6000,
+                "wind": {
+                    "speed": 7.72,
+                    "deg": 290
+                },
+                "clouds": {
+                    "all": 0
+                },
+                "dt": 1719233310,
+                "sys": {
+                    "type": 1,
+                    "id": 7520,
+                    "country": "JO",
+                    "sunrise": 1719196292,
+                    "sunset": 1719247544
+                },
+                "timezone": 10800,
+                "id": 250441,
+                "name": "Amman",
+                "cod": 200
+            };
+
+            const updateWeather = (data) => {
+                const date = new Date(data.dt * 1000);
+                const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                const dayName = days[date.getUTCDay()];
+                const day = date.getUTCDate();
+                const month = date.getUTCMonth() + 1;
+                const year = date.getUTCFullYear();
+
+                dayNameElement.textContent = dayName;
+                dateElement.textContent = `${day} ${month < 10 ? '0' : ''}${month} ${year}`;
+                locationElement.textContent = `${data.name}, ${data.sys.country}`;
+                tempElement.textContent = `${(data.main.temp - 273.15).toFixed(1)}°C`;
+                descriptionElement.textContent = data.weather[0].description;
+                pressureElement.textContent = `${data.main.pressure} hPa`;
+                humidityElement.textContent = `${data.main.humidity} %`;
+                windElement.textContent = `${data.wind.speed} km/h`;
+
+                const iconMap = {
+                    "01d": "sun",
+                    "01n": "moon",
+                    "02d": "cloud-sun",
+                    "02n": "cloud-moon",
+                    "03d": "cloud",
+                    "03n": "cloud",
+                    "04d": "cloud",
+                    "04n": "cloud",
+                    "09d": "cloud-drizzle",
+                    "09n": "cloud-drizzle",
+                    "10d": "cloud-rain",
+                    "10n": "cloud-rain",
+                    "11d": "cloud-lightning",
+                    "11n": "cloud-lightning",
+                    "13d": "cloud-snow",
+                    "13n": "cloud-snow",
+                    "50d": "wind",
+                    "50n": "wind"
+                };
+
+                const icon = iconMap[data.weather[0].icon];
+                if (icon) {
+                    weatherIcon.setAttribute('data-feather', icon);
+                    feather.replace();
+                }
+            };
+
+            citySelector.addEventListener('change', () => {
+                const selectedCity = citySelector.value;
+                let cityApiUrl = '';
+                
+                if (selectedCity === 'Paris') {
+                    cityApiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=Paris&appid=04c2da5ffc8ec18ecedd45d8daba00b7';
+                } else if (selectedCity === 'Amman') {
+                    cityApiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=Amman&appid=04c2da5ffc8ec18ecedd45d8daba00b7';
+                } else if (selectedCity === 'London') {
+                    cityApiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=London&appid=04c2da5ffc8ec18ecedd45d8daba00b7';
+                }
+
+                fetch(cityApiUrl)
+                    .then(response => response.json())
+                    .then(data => updateWeather(data))
+                    .catch(error => console.error('Error fetching the weather data:', error));
+            });
+
+            // Initial load
+            updateWeather(apiData);
+        });
+    </script>
+    <script src="https://unpkg.com/feather-icons"></script>
+</body>
+</html>
